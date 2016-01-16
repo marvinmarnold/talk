@@ -63,6 +63,7 @@ if(Meteor.isServer) {
       if(options.body)
         message.body = options.body
 
+      message.createdAt = new Date()
       return Messages.insert(message)
     }
   });
