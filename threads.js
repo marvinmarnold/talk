@@ -10,4 +10,16 @@ _.extend(Thread.prototype, {
   recipientId: function() {
     return this.user1Id === Meteor.userId() ? this.user2Id : this.user1Id
   },
+  messages: function() {
+    return Messages.find({threadId: this._id})
+  },
+  recipientName: function() {
+    var recipientId = this.recipientId()
+
+    if(recipientId) {
+      var recipient = Meteor.users.findOne(recipientId)
+      if(recipient && recipient.profile)
+        return recipient.profile.firstName + " " + recipient.profile.lastName
+    }
+  }
 })
