@@ -13,7 +13,11 @@ Package.describe({
 Package.onUse(function(api) {
   api.versionsFrom('1.2.1');
   api.use(['ecmascript', 'accounts-base', 'mongo', 'check', 'underscore']);
-  api.addFiles('talk.js');
+
+  api.use('meteorhacks:aggregate@1.3.0')
+
+  api.addFiles(['messages.js', 'threads.js', 'talk.js']);
+  api.addFiles('talk-server.js', 'server');
 
   api.export('Talk');
 });
