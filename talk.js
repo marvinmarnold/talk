@@ -22,4 +22,10 @@ Talk = {
   send: function(options, callback) {
     Meteor.call("talk/send", options, callback);
   },
+  unreadMessageCount: function() {
+    return _.reduce(Talk.threads(), function(sum, _thread) {
+      var thread = Threads.findOne(_thread._id)
+      return sum + thread.unreadCount()
+    }, 0)
+  }
 }

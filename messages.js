@@ -15,10 +15,13 @@ _.extend(Message.prototype, {
       return "You"
   },
   otherName: function() {
-    var user = Meteor.users.findOne(this.senderId)
+    // only display the name of the sender
+    if(!this.senderId === Meteor.userId()) {
+      var user = Meteor.users.findOne(this.senderId)
 
-    if(user && user.profile)
-      return user.profile.firstName + " " + user.profile.lastName
+      if(user && user.profile)
+        return user.profile.firstName + " " + user.profile.lastName
+    }
   },
   isRecipient: function() {
     return this.recipientId === Meteor.userId()

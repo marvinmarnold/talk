@@ -1,6 +1,5 @@
 Meteor.methods({
   'talk/send': function(options) {
-    console.log('talk/send');
     if(!Meteor.userId())
       throw new Meteor.Error('talk-not-logged-in', "Cannot send messages when not logged in.")
 
@@ -47,7 +46,9 @@ Meteor.methods({
     if(!thread) {
       thread = Threads.insert({
         user1Id: Meteor.userId(),
-        user2Id: message.recipientId
+        user2Id: message.recipientId,
+        user1SeenAt: new Date(),
+        user2SeenAt: new Date(0)
       })
     }
 
@@ -57,13 +58,45 @@ Meteor.methods({
   'talk/create-thread': function(recipientId) {
     check(recipientId, String);
 
-    if(Meteor.userId())
-      return Threads.insert({user1Id: Meteor.userId(), user2Id: recipientId})
+    if(Meteor.userId()) {
+      return Threads.insert({
+        user1Id: Meteor.userId(),
+        user2Id: recipientId,
+        user1SeenAt: new Date(),
+        user2SeenAt: new Date(0)
+      })
+    }
+  },
+  'talk/seen': function(threadId) {
+    check(threadId, String);
+    var userId = Meteor.userId()
+    if(!userId)
+      throw new Meteor.Error('talk-not-logged-in', "Cannot send messages when not logged in.")
+
+    var thread = Threads.findOne({
+      _id: threadId,
+      $or: [
+        {user1Id: userId},
+        {user2Id: userId}
+      ]
+    })
+
+    if(!thread)
+      throw new Meteor.Error('talk-unauthorized-access', "You do not have permission to do that.")
+
+    var modifier
+
+    if(thread.userIndex() === 1) {
+      modifier = {user1SeenAt: new Date()}
+    } else {
+      modifier = {user2SeenAt: new Date()}
+    }
+
+    return Threads.update(thread.index, {$set: modifier})
   }
 });
 
 Meteor.publish("talk/messages", function(threadId) {
-  console.log(threadId);
   check(threadId, String);
 
   var thread = Threads.findOne({$or: [
