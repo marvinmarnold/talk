@@ -13,6 +13,9 @@ _.extend(Thread.prototype, {
   messages: function() {
     return Messages.find({threadId: this._id})
   },
+  isEmpty: function() {
+    return this.messages().count() === 0
+  },
   recipientName: function() {
     var recipientId = this.recipientId()
 

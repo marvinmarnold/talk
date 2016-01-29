@@ -20,7 +20,6 @@ Talk = {
     })
   },
   send: function(options, callback) {
-    console.log('send');
     Meteor.call("talk/send", options, callback);
   },
 }
