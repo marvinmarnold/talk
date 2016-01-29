@@ -73,6 +73,8 @@ Meteor.publish("talk/messages", function(threadId) {
 
   if(thread)
     return Messages.find({threadId: threadId}, {sort: {createdAt: -1}})
+
+  this.ready()
 });
 
 Meteor.publish("talk/all-messages", function() {

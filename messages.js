@@ -28,5 +28,5 @@ _.extend(Message.prototype, {
   },
   isAttachment: function() {
     return !!this.attachmentUrl
-  }
+  },
 })
