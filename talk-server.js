@@ -92,7 +92,38 @@ Meteor.methods({
       modifier = {user2SeenAt: new Date()}
     }
 
-    return Threads.update(thread.index, {$set: modifier})
+    return Threads.update(thread._id, {$set: modifier})
+  },
+  'talk/seen-message': function(messageId) {
+    check(messageId, String)
+    var userId = Meteor.userId()
+    if(!userId)
+      throw new Meteor.Error('talk-not-logged-in', "Cannot send messages when not logged in.")
+
+    var message = Messages.findOne(messageId)
+    if(!message)
+      throw new Meteor.Error('talk-unauthorized-access', "You do not have permission to do that.")
+
+    var thread = Threads.findOne({
+      _id: message.threadId,
+      $or: [
+        {user1Id: userId},
+        {user2Id: userId}
+      ]
+    })
+
+    if(!thread)
+      throw new Meteor.Error('talk-unauthorized-access', "You do not have permission to do that.")
+
+    var modifier
+
+    if(thread.userIndex() === 1) {
+      modifier = {user1SeenAt: new Date()}
+    } else {
+      modifier = {user2SeenAt: new Date()}
+    }
+
+    return Threads.update(thread._id, {$set: modifier})
   }
 });
 

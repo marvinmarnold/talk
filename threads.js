@@ -14,10 +14,9 @@ _.extend(Thread.prototype, {
     return (this.user1Id === Meteor.userId()) ? 1 : 2
   },
   messages: function() {
-    return Messages.find({threadId: this._id})
+    return Messages.find({threadId: this._id}, {sort: {createdAt: -1}})
   },
   isEmpty: function() {
-    console.log(this.messages().count());
     return this.messages().count() === 0
   },
   recipientName: function() {
@@ -29,6 +28,15 @@ _.extend(Thread.prototype, {
         return recipient.profile.firstName + " " + recipient.profile.lastName
     }
   },
+  recipientFirstName: function() {
+    var recipientId = this.recipientId()
+
+    if(recipientId) {
+      var recipient = Meteor.users.findOne(recipientId)
+      if(recipient && recipient.profile)
+        return recipient.profile.firstName
+    }
+  },
   unreadCount: function() {
     var selector
 
@@ -38,7 +46,10 @@ _.extend(Thread.prototype, {
       selector = {createdAt: {$gt: this.user2SeenAt}}
     }
 
-    _.extend(selector, {threadId: this._id})
+    _.extend(selector, {threadId: this._id, recipientId: Meteor.userId()})
     return Messages.find(selector).count()
+  },
+  prettyUnreadCount: function() {
+    return (this.unreadCount() === 0) ? "" : " ( " + this.unreadCount() + " )"
   }
 })

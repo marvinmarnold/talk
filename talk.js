@@ -13,7 +13,8 @@ Talk = {
     var threadId = Meteor.call("talk/create-thread", recipientId);
   },
   threads: function() {
-    var allThreads = Talk.Threads.find().fetch()
+
+    var allThreads = Talk.Threads.find({}, {sort: {user1SeenAt: -1}}).fetch()
 
     return _.filter(allThreads, function(thread) {
       return thread.messages().count() > 0

@@ -57,7 +57,6 @@ Tinytest.addAsync('send', function(test, done) {
 })
 
 testLogin = function(test, callback) {
-  console.log('testLogintestLogin');
   let email = 'testuser-' + Random.id() + "@example.com"
   let userId = Accounts.createUser({
     email: email,
