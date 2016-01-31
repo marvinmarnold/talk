@@ -53,7 +53,25 @@ Meteor.methods({
     }
 
     message.threadId = thread._id
-    return Messages.insert(message)
+    var res = Messages.insert(message)
+
+    if(res) {
+      var recipient = Meteor.users.findOne(options.recipientId)
+
+      Email.send({
+        from: 'SpaceCadet <do-not-reply@spacecadet.io>',
+        to: recipient.emails[0].address,
+        subject: "New message on SpaceCadet",
+        text: "Greetings " + recipient.profile.firstName + "," +
+              "\nThank you for being a part of the SpaceCadet Fleet, a message has been transmitted to your inbox." +
+              " Please visit https://spacecadet.io/inbox to read and respond to this message." +
+
+              "\n\nHappy Renting," +
+              "\nThe Space Cadets"
+      })
+    }
+
+    return res
   },
   'talk/create-thread': function(recipientId) {
     check(recipientId, String);
