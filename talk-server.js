@@ -57,7 +57,7 @@ Meteor.methods({
 
     if(res) {
       var recipient = Meteor.users.findOne(options.recipientId)
-
+      this.unblock()
       Email.send({
         from: 'SpaceCadet <do-not-reply@spacecadet.io>',
         to: recipient.emails[0].address,
