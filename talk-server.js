@@ -28,7 +28,7 @@ Meteor.methods({
       throw new Meteor.Error('talk-invalid-recipient', "The user you are trying to send to does not exist.")
 
     if(options.body)
-      message.body = options.body
+      message.body = sanitizeText(options.body)
 
     message.createdAt = new Date()
 
@@ -172,3 +172,13 @@ Meteor.publish("talk/threads", function() {
     {user2Id: this.userId}
   ]})
 });
+
+var sanitizeText = function(text) {
+  var warn = "[CONTACT INFORMATION REMOVED]"
+  text = text.replace(/[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/, warn) // email
+  text = text.replace(/(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/, warn) // phone numbers
+
+  return text
+}
+
+var emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
