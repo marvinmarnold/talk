@@ -163,7 +163,7 @@ Meteor.publish("talk/all-messages", function() {
   return Messages.find({$or: [
     {senderId: this.userId},
     {recipientId: this.userId}
-  ]}, {sort: {createdAt: -1}})
+  ]}, {sort: {createdAt: 1}})
 });
 
 Meteor.publish("talk/threads", function() {

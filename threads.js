@@ -14,7 +14,7 @@ _.extend(Thread.prototype, {
     return (this.user1Id === Meteor.userId()) ? 1 : 2
   },
   messages: function() {
-    return Messages.find({threadId: this._id}, {sort: {createdAt: -1}})
+    return Messages.find({threadId: this._id}, {sort: {createdAt: 1}})
   },
   isEmpty: function() {
     return this.messages().count() === 0
